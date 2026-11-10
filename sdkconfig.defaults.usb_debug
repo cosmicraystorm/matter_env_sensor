@@ -1,0 +1,16 @@
+# ==============================================================================
+# USBデバッグ用 上書き設定
+#
+# 使い方 (通常ビルドと混ざらないよう別ディレクトリ・別sdkconfigでビルドする):
+#   idf.py -B build.usb_debug -D SDKCONFIG=sdkconfig.usb_debug \
+#          -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.usb_debug" build
+#
+# 通常ビルドは自動 Light Sleep が有効で、ホストがUSBをサスペンドするとスリープに入り
+# USB Serial/JTAG が切断される(COMポートが消える)。
+# デバッグ時は Light Sleep を無効にしてUSB接続とログを維持する。
+# ICD(SED) は有効のままなので、30秒周期・LED・Thread の動作確認はできる。
+# ==============================================================================
+
+# 自動 Light Sleep を無効化
+CONFIG_PM_ENABLE=n
+CONFIG_FREERTOS_USE_TICKLESS_IDLE=n

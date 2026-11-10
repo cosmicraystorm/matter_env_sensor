@@ -1,0 +1,23 @@
+# ==============================================================================
+# 【調査用・運用では使わないこと】ICD(SED) を無効化したビルド
+#
+# 目的:
+#   コントローラーが ICD デバイスを受け付けるかを切り分けるためのビルド。
+#
+# 調査結果 (2026-11-10, Aqara Hub M100 / M200):
+#   - ICD 有効: Aqara が ICD Management クラスタ(0x0046)を読んだ直後に
+#     ArmFailSafe(0s) を送ってコミッショニングを中断する
+#   - 本ビルド(ICD 無効): コミッショニング成功
+#   → 対策として通常ビルドでは ICD を有効のまま、app_main.cpp で
+#     ICD Management クラスタだけをデータモデルから削除している
+#
+# 注意:
+#   ICD 無効だと esp-matter が Thread デバイスタイプを Minimal End Device
+#   (無線常時受信) にするため、電池駆動では数日しか持たない。
+#   ICD が無いと SED 復帰イベントも来ないので、測定は 30 秒タイマーで起動する (app_main.cpp)
+#
+# 使い方 (usb_debug と重ねる):
+#   idf.py -B build.no_icd -D SDKCONFIG=sdkconfig.no_icd \
+#          -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.usb_debug;sdkconfig.defaults.no_icd" build
+# ==============================================================================
+CONFIG_ENABLE_ICD_SERVER=n

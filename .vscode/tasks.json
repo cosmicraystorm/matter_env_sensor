@@ -1,0 +1,53 @@
+{
+    // ビルドは WSL(Ubuntu) の ESP-IDF v5.4.4 + esp-matter (esp-matter は C6 向けに IDF v5.4 系を推奨) で行う
+    "version": "2.0.0",
+    "options": {
+        "env": {
+            "IDF_INIT": ". ~/esp/esp-idf-v5.4.4/export.sh > /dev/null && . ~/esp/esp-matter/export.sh > /dev/null && cd /mnt/d/projects/air_monitor_matter"
+        }
+    },
+    "tasks": [
+        {
+            "label": "ESP-IDF: Build Project",
+            "type": "shell",
+            "command": "wsl -d Ubuntu -- bash -lc \"${env:IDF_INIT} && idf.py build\"",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP-IDF: Flash Project (WSL / usbipd)",
+            "type": "shell",
+            "command": "wsl -d Ubuntu -- bash -lc \"${env:IDF_INIT} && idf.py -p ${input:wslPort} flash\"",
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP-IDF: Flash & Monitor (WSL / usbipd)",
+            "type": "shell",
+            "command": "wsl -d Ubuntu -- bash -lc \"${env:IDF_INIT} && idf.py -p ${input:wslPort} flash monitor\"",
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP-IDF: Monitor Project (WSL / usbipd)",
+            "type": "shell",
+            "command": "wsl -d Ubuntu -- bash -lc \"${env:IDF_INIT} && idf.py -p ${input:wslPort} monitor\"",
+            "problemMatcher": []
+        },
+        {
+            "label": "Flash (Windows esptool)",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}/build" },
+            "command": "C:\\Users\\cosmi\\esptool\\esptool-windows-amd64\\esptool.exe --chip esp32c6 -p ${input:windowsPort} -b 460800 --before default-reset --after hard-reset write-flash '@flash_args'",
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP-IDF: Clean Project",
+            "type": "shell",
+            "command": "wsl -d Ubuntu -- bash -lc \"${env:IDF_INIT} && idf.py fullclean\"",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        { "id": "wslPort", "type": "promptString", "description": "WSL のシリアルポート (usbipd attach 済み)", "default": "/dev/ttyACM0" },
+        { "id": "windowsPort", "type": "promptString", "description": "Windows の COM ポート", "default": "COM3" }
+    ]
+}

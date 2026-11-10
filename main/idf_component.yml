@@ -1,0 +1,4 @@
+# esp-matter examples/common (app_reset) が要求するため
+dependencies:
+  espressif/button:
+    version: "^4"

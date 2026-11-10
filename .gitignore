@@ -1,0 +1,8 @@
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+build.usb_debug/
+sdkconfig.usb_debug
+build.no_icd/
+sdkconfig.no_icd
